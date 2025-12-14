@@ -13,7 +13,7 @@ RETURNS TABLE (
 AS 'MODULE_PATHNAME', 'get_last_error'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION get_error_history(limit int DEFAULT 10)
+CREATE FUNCTION get_error_history(max_results int DEFAULT 10)
 RETURNS TABLE (
     backend_pid int,
     query_text text,

@@ -274,7 +274,7 @@ get_last_error(PG_FUNCTION_ARGS)
 }
 
 /*
- * SQL function: get_error_history(limit int)
+ * SQL function: get_error_history(max_results int)
  * Returns recent errors across all backends
  */
 Datum
