@@ -8,7 +8,7 @@ RETURNS TABLE (
     error_message text,
     sql_state text,
     error_level int,
-    timestamp timestamptz
+    "timestamp" timestamptz
 )
 AS 'MODULE_PATHNAME', 'get_last_error'
 LANGUAGE C STRICT;
@@ -20,7 +20,7 @@ RETURNS TABLE (
     error_message text,
     sql_state text,
     error_level int,
-    timestamp timestamptz
+    "timestamp" timestamptz
 )
 AS 'MODULE_PATHNAME', 'get_error_history'
 LANGUAGE C STRICT;
