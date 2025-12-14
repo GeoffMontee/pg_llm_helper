@@ -41,7 +41,7 @@ sudo make install
 
 pgai provides SQL functions to call LLMs like OpenAI, Anthropic, etc. The `llm_help_last_error()` function requires pgai.
 
-**Important:** pgai requires Python 3.12 or earlier. If you're using Debian 13 (Trixie) with Python 3.13, use Debian 12 (Bookworm) or the Timescale Docker image instead.
+**Important:** pgai requires Python 3.12 or earlier. If you're using Debian 13 (Trixie) with Python 3.13, it still seems to work. However, you might want to use Debian 12 (Bookworm) or the Timescale Docker image instead.
 
 **Option A: Use Timescale Docker Image (Easiest)**
 
@@ -115,8 +115,8 @@ plpython3u (used by pgai) needs to find the Python packages. If you get "ModuleN
 
 2. Install packages to one of those directories:
    ```bash
-   # Example for Python 3.12
-   pip3 install --target /usr/local/lib/python3.12/dist-packages \
+   # Example for Python 3.13
+   pip3 install --target /usr/lib/python3.13 \
        openai anthropic cohere
    ```
 
@@ -126,8 +126,6 @@ plpython3u (used by pgai) needs to find the Python packages. If you get "ModuleN
      -e PYTHONPATH=/usr/local/lib/pgai/0.11.1:/usr/local/lib/python3.12/dist-packages \
      ...
    ```
-
-### 2. Build and Install pg_llm_helper Extension
 
 ### 2. Build and Install pg_llm_helper Extension
 
@@ -321,24 +319,6 @@ Make sure you:
 2. Restarted PostgreSQL (reload is not enough)
 3. Have correct permissions on the shared library
 
-### Shared memory error on startup
-
-If you see:
-```
-FATAL: cannot request additional shared memory outside shmem_request_hook
-```
-
-This means you're using an older version of the extension. Make sure you have the latest version that properly uses `shmem_request_hook`.
-
-### Shared memory error on startup
-
-If you see:
-```
-FATAL: cannot request additional shared memory outside shmem_request_hook
-```
-
-This means you're using an older version of the extension. Make sure you have the latest version that properly uses `shmem_request_hook`.
-
 ### Python module not found errors
 
 If you see errors like:
@@ -367,11 +347,11 @@ This means plpython3u cannot find the Python packages. Solutions:
    python3 --version
    
    # Install to dist-packages (adjust version as needed)
-   pip3 install --target /usr/local/lib/python3.12/dist-packages \
-       openai anthropic cohere
+   pip3 install --target /usr/lib/python3.13 \
+       openai anthropic cohere backoff
    
    # Verify installation
-   ls /usr/local/lib/python3.12/dist-packages/openai
+   ls /usr/lib/python3.13/openai
    
    # Restart PostgreSQL
    docker restart your-container-name
@@ -387,7 +367,7 @@ This means plpython3u cannot find the Python packages. Solutions:
 ### Python 3.13 compatibility
 
 pgai does not currently support Python 3.13. If you're using:
-- **Debian 13 (Trixie)**: Use Debian 12 (Bookworm) image instead
+- **Debian 13 (Trixie)**: It still seems to work, but you can use Debian 12 (Bookworm) image instead
 - **Docker**: Use `timescale/timescaledb-ha:pg17` which includes everything pre-configured
 - **From scratch**: Install Python 3.12 instead of 3.13
 
