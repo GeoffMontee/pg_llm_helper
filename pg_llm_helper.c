@@ -45,6 +45,7 @@ typedef struct ErrorBuffer
 static ErrorBuffer *error_buffer = NULL;
 static emit_log_hook_type prev_emit_log_hook = NULL;
 static shmem_startup_hook_type prev_shmem_startup_hook = NULL;
+static shmem_request_hook_type prev_shmem_request_hook = NULL;
 
 /* Function declarations */
 void _PG_init(void);
@@ -52,6 +53,7 @@ void _PG_fini(void);
 
 static void llm_helper_emit_log(ErrorData *edata);
 static void llm_helper_shmem_startup(void);
+static void llm_helper_shmem_request(void);
 static Size llm_helper_shmem_size(void);
 
 PG_FUNCTION_INFO_V1(get_last_error);
@@ -73,15 +75,12 @@ void
 _PG_init(void)
 {
     if (!process_shared_preload_libraries_in_progress)
-        ereport(ERROR,
-                (errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-                 errmsg("pg_llm_helper must be loaded via shared_preload_libraries")));
-
-    /* Request shared memory */
-    RequestAddinShmemSpace(llm_helper_shmem_size());
-    RequestNamedLWLockTranche("pg_llm_helper", 1);
+        return;
 
     /* Install hooks */
+    prev_shmem_request_hook = shmem_request_hook;
+    shmem_request_hook = llm_helper_shmem_request;
+
     prev_shmem_startup_hook = shmem_startup_hook;
     shmem_startup_hook = llm_helper_shmem_startup;
 
@@ -98,8 +97,22 @@ void
 _PG_fini(void)
 {
     /* Restore hooks */
+    shmem_request_hook = prev_shmem_request_hook;
     emit_log_hook = prev_emit_log_hook;
     shmem_startup_hook = prev_shmem_startup_hook;
+}
+
+/*
+ * Shared memory request hook - called during postmaster startup
+ */
+static void
+llm_helper_shmem_request(void)
+{
+    if (prev_shmem_request_hook)
+        prev_shmem_request_hook();
+
+    RequestAddinShmemSpace(llm_helper_shmem_size());
+    RequestNamedLWLockTranche("pg_llm_helper", 1);
 }
 
 /*

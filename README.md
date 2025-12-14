@@ -202,6 +202,15 @@ Make sure you:
 2. Restarted PostgreSQL (reload is not enough)
 3. Have correct permissions on the shared library
 
+### Shared memory error on startup
+
+If you see:
+```
+FATAL: cannot request additional shared memory outside shmem_request_hook
+```
+
+This means you're using an older version of the extension. Make sure you have the latest version that properly uses `shmem_request_hook`.
+
 ### Can't create extension
 
 Check that:
