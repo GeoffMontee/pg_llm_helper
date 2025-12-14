@@ -81,7 +81,7 @@ python3 projects/extension/build.py install
 
 # Install Python dependencies where plpython3u can find them
 # (Adjust Python version as needed - check with: python3 --version)
-pip3 install --target /usr/local/lib/python3.12/dist-packages \
+pip3 install --target /usr/lib/python3.13 \
     openai \
     anthropic \
     cohere
