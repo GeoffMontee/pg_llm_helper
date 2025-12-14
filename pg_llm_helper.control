@@ -1,0 +1,5 @@
+# pg_llm_helper extension
+comment = 'Capture PostgreSQL errors for LLM analysis'
+default_version = '1.0'
+module_pathname = '$libdir/pg_llm_helper'
+relocatable = true
